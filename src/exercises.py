@@ -69,6 +69,7 @@ def create_schema(conn: sqlite3.Connection) -> None:
 def add_student(conn: sqlite3.Connection, name: str, email: str) -> int:
     """
     Insert a student and return the new student id.
+    student = conn.execute("INSERT into students(name, email VALUES
 
     TODO:
       - Use a parameterized INSERT
@@ -100,6 +101,7 @@ def find_student_by_email(conn: sqlite3.Connection, email: str) -> Optional[sqli
 def rename_student(conn: sqlite3.Connection, student_id: int, new_name: str) -> int:
     """
     Update a student's name. Return number of rows updated (cursor.rowcount).
+
 
     TODO:
       - Use parameterized UPDATE
@@ -133,6 +135,12 @@ def delete_student(conn: sqlite3.Connection, student_id: int) -> int:
 def list_enrollments(conn: sqlite3.Connection) -> list[sqlite3.Row]:
     """
     Return rows showing: student_name, course_code, course_title
+    rows = conn.execute("
+    SELECT s.name AS student_name, c.code AS course_code, c.title AS course_title
+     FROM enrollments e
+     JOIN students s ON e.student_id = s.id
+     JOIN courses c ON e.course_id = c.id
+     ORDER BY s.name, c.code").fetchall()
 
     TODO:
       - Write a SELECT with JOIN across enrollments, students, courses
@@ -149,6 +157,7 @@ def list_enrollments(conn: sqlite3.Connection) -> list[sqlite3.Row]:
 def enroll_student(conn: sqlite3.Connection, student_id: int, course_id: int) -> None:
     """
     Enroll a student in a course.
+    cursor = conn.execute("INSERT into student(name, email) VALUES (?,?);"
 
     TODO:
       - Use parameterized INSERT into enrollments

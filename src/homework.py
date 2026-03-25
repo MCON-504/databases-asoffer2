@@ -96,7 +96,7 @@ def create_schema(conn: sqlite3.Connection) -> None:
     );
         
     """
-    exec_script(conn, schema)
+    conn.executescript(schema)
 
 
 # ---------------------------
@@ -104,6 +104,13 @@ def create_schema(conn: sqlite3.Connection) -> None:
 # ---------------------------
 def add_student(conn: sqlite3.Connection, name: str, email: str) -> int:
     """Insert into students and return new id."""
+
+    """
+    cursor = conn.execute("INSERT into students(name,email) VALUES (?,?)" (name, email))
+    return cursor.lastrowid
+    """
+
+
     student = (name, email)
     cursor = conn.execute("INSERT INTO students (name, email) VALUES (?,?);", student)
     return cursor.lastrowid
@@ -112,6 +119,11 @@ def add_student(conn: sqlite3.Connection, name: str, email: str) -> int:
 
 def add_assignment(conn: sqlite3.Connection, title: str, max_points: int) -> int:
     """Insert into assignments and return new id."""
+    """
+    cursor = conn.execute("INSERT into assignments(title, max_points) VALUES (?,?)", (title, max_points))
+    """
+
+
     assignment = (title, max_points)
     cursor = conn.execute("INSERT INTO assignments(title, max_points) VALUES (?,?);", assignment)
     return cursor.lastrowid
@@ -119,6 +131,9 @@ def add_assignment(conn: sqlite3.Connection, title: str, max_points: int) -> int
 
 def record_grade(conn: sqlite3.Connection, student_id: int, assignment_id: int, score: int) -> int:
     """Insert into grades and return new id."""
+
+
+
     grade = (student_id, assignment_id, score)
     cursor = conn.execute("INSERT INTO grades(student_id, assignment_id, score) VALUES (?, ?, ?);", grade)
     return cursor.lastrowid
@@ -129,6 +144,14 @@ def record_grade(conn: sqlite3.Connection, student_id: int, assignment_id: int, 
 # ---------------------------
 def list_students(conn: sqlite3.Connection) -> list[sqlite3.Row]:
     """Return all students ordered by name."""
+    """
+    students = conn.execute("SELECT name, id, email FROM students ORDER BY name;").fetchall()
+    """
+
+
+
+
+
     rows = conn.execute("SELECT id, name, email from students ORDER BY name;").fetchall()
     return rows
 
@@ -141,6 +164,16 @@ def student_grade_report(conn: sqlite3.Connection, student_id: int) -> list[sqli
     Hint:
       percent = ROUND(1.0 * score / max_points * 100, 1)
     """
+    """rows = cnn.execute("
+    SELECT a.title as assignment_title, g.score as score, a.max_points as max_points, ROUND(1.0 * score / max_points * 100, 1) AS percent
+    FROM grades g
+    JOIN assignments a ON g.assignment_id = a.id
+    JOIN students s ON g.student_id = s.id
+    WHERE student_id=?
+    ", (student_id,)).fetchall()"""
+
+
+
     rows = conn.execute("SELECT a.title AS assignment_title, g.score, a.max_points, ROUND(1.0 * score / max_points * 100, 1) AS percent FROM grades g, JOIN assignments a ON g.assignment_id = a.id WHERE g.student_id = ?; ", (student_id,)).fetchall()
     return rows
 
