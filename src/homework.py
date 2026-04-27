@@ -89,8 +89,8 @@ def create_schema(conn: sqlite3.Connection) -> None:
     assignment_id INTEGER NOT NULL,
     score INTEGER NOT NULL CHECK (score >= 0),
     
-    FOREIGN KEY student_id REFERENCES students(id) ON DELETE CASCADE,
-    FOREIGN KEY assignment_id REFERENCES assignments(id) ON DELETE CASCADE,
+    FOREIGN KEY(student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
         
     UNIQUE(student_id, assignment_id)
     );
